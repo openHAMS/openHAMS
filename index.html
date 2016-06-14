@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <title>weather_station</title>
+    <style>
+      @import url(//fonts.googleapis.com/css?family=Roboto:400,300&subset=latin,latin-ext);
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: 'Roboto', sans-serif; font-weight: 300; font-size: 1.5em; }
+      data { font-weight: 400; }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  </head>
+  <body>
+
+    <table>
+      <tr>
+        <td>temperature: </td>
+        <td align="right" style="width:4em"><data id="temp"></data></td>
+        <td>&#8451;</td>
+      </tr>
+      <tr>
+        <td>atmospheric pressure: </td>
+        <td align="right" style="width:4em"><data id="atm"></data></td>
+        <td>hPa</td>
+      </tr>
+    </table>
+
+
+
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="https://code.jquery.com/jquery-3.0.0.js"></script>
+    <script>
+      var socket = io();
+      socket.on('temp', function(t)
+      {
+        $('#temp').text(t);
+      });
+      socket.on('atm', function(a)
+      {
+        $('#atm').text(a);
+      });
+    </script>
+  </body>
+</html>

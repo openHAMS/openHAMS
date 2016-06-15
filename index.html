@@ -4,14 +4,17 @@
     <title>weather_station</title>
     <style>
       @import url(//fonts.googleapis.com/css?family=Roboto:400,300&subset=latin,latin-ext);
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font-family: 'Roboto', sans-serif; font-weight: 300; font-size: 1.5em; }
+      * { box-sizing: border-box; }
+      body { font-family: 'Roboto', sans-serif; font-size: 1.5em; font-weight: 300; }
+      h1 { color: #2196F3; font-size: 2em; font-weight: 300; }
+
       data { font-weight: 400; }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   </head>
   <body>
-
+    <h1>Weather Station</h1>
+    
     <table>
       <tr>
         <td>temperature: </td>
@@ -24,20 +27,22 @@
         <td>hPa</td>
       </tr>
     </table>
-
-
-
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="https://code.jquery.com/jquery-3.0.0.js"></script>
     <script>
       var socket = io();
+      var connected;
+      socket.on('connect', function()
+      {
+        
+      });
       socket.on('temp', function(t)
       {
         $('#temp').text(t);
       });
       socket.on('atm', function(a)
       {
-        $('#atm').text(a);
+        $('#atm').text(a/100);
       });
     </script>
   </body>

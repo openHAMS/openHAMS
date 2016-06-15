@@ -4,9 +4,13 @@ var server = http.Server(app);
 var io = require('socket.io')(server);
 var serialport = require('serialport');
 
-var clients = [];
 var jsonContent;
-var portName = process.argv[2];
+var portName = '/dev/ttyACM0';
+if(process.argv.length > 2)
+{
+    portName = process.argv[2];
+}
+
 var sp = serialport.SerialPort;
 var ardu = new sp(portName, 
 {
@@ -28,20 +32,8 @@ ardu.on('open', function() { console.log("open"); });
 ardu.on('data', function(data)
 {
     var jsonData = JSON.parse(data);
-    for(var i = 0; i < clients.length; i++)
-    {
-        clients[i].emit('temp', jsonData.temp);
-        clients[i].emit('atm', jsonData.atm);
-    }
-});
-
-io.on('connection', function(socket)
-{
-    clients.push(socket);
-    socket.once('disconnect', function()
-    {
-        clients.splice(clients.indexOf(socket), 1);
-    });
+    io.sockets.emit('temp', jsonData.temp);
+    io.sockets.emit('atm', jsonData.atm);
 });
 
 http.get(pingUrl, function (response)

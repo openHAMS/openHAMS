@@ -44,7 +44,6 @@ client.socket.on('error', function(error)
 
 app.get('/query', function(req, res)
 {
-	var url = 'http://localhost:8086/query?' + qs.stringify(queryParams);
 	request(
 	{
 		method:'GET',

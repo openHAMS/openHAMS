@@ -23,6 +23,11 @@ var client = new StatsD(
 {
     "telegraf": "true"
 });
+client.socket.on('error', function(error)
+{
+    console.error("Error in socket: ", error);
+});
+
 
 
 var pingUrl = "http://ipecho.net/plain";
@@ -35,17 +40,10 @@ var queryParams =
 	epoch: 'ms'
 };
 
-client.socket.on('error', function(error)
-{
-    console.error("Error in socket: ", error);
-});
-
-
 
 app.get('/query', function(req, res)
 {
 	queryParams = merge(queryParams, req.query);
-	console.log(queryParams);
 	request(
 	{
 		method:'GET',
@@ -81,8 +79,8 @@ ardu.on('data', function(data)
         io.sockets.emit('atm', jsonData.atm);
 		client.gauge('temp', jsonData.temp);
 		client.gauge('atm', jsonData.atm);
-
-    }catch(e)
+    }
+	catch(e)
     {
         console.log('json error: ' + e);
     }

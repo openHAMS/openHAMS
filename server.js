@@ -6,6 +6,7 @@ var io = require('socket.io')(server);
 var serialport = require('serialport');
 var qs = require('qs');
 var request = require('request');
+var merge = require('merge');
 
 var jsonContent;
 var portName = '/dev/ttyACM0';
@@ -31,8 +32,7 @@ var queryParams =
 	u: 'public',
 	p: 'public',
 	db: 'mydb',
-	epoch: 'ms',
-	q: 'SELECT time,value FROM temp'
+	epoch: 'ms'
 };
 
 client.socket.on('error', function(error)
@@ -44,6 +44,8 @@ client.socket.on('error', function(error)
 
 app.get('/query', function(req, res)
 {
+	queryParams = merge(queryParams, req.query);
+	console.log(queryParams);
 	request(
 	{
 		method:'GET',
@@ -58,7 +60,6 @@ app.get('/query', function(req, res)
 			res.json(body);
 		}
 	});
-	//res.json("{\"results\": [{\"series\": [{\"name\": \"temp\",\"columns\": [\"time\",\"value\"],\"values\": [[1466536248710,27],[1466536259142,26.9],[1466645576000,27],[1466645606000,27],[1466645636000,27],[1466645666000,27]]}]}]}");
 });
 
 

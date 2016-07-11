@@ -62,14 +62,15 @@
 				$('#atm').text(a/100);
 			});
 			
+			var q = { q: 'SELECT time,value FROM temp' };
 			function queryData()
 			{
-				$.get("query", function(influxData)
+				$.get('query', q, function(influxData)
 				{
 					$('#container').highcharts('StockChart',
 					{
 						rangeSelector:
-						{ 
+						{
 							allButtonsEnabled: true,
 							buttons: 
 							[

@@ -39,10 +39,11 @@
 		<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 		<script>
 			var socket = io();
+			
 			socket.on('connect', function()
 			{
 				changeStatus('Connected', 'connect');
-				
+				queryData();
 			});
 			socket.on('connect_error', function()
 			{
@@ -61,66 +62,56 @@
 				$('#atm').text(a/100);
 			});
 			
+			function queryData()
+			{
+				$.get("query", function(influxData)
+				{
+					$('#container').highcharts('StockChart',
+					{
+						rangeSelector:
+						{ 
+							allButtonsEnabled: true,
+							buttons: 
+							[
+								{
+									type: 'minute',
+									count: 60,
+									text: 'hour'
+								},
+								{
+									type: 'day',
+									count: 1,
+									text: 'day'
+								},
+								{
+									type: 'week',
+									count: 1,
+									text: 'week'
+								},
+								{
+									type: 'all',
+									text: 'All'
+								}
+							],
+							selected: 0
+						},
+						xAxis: { ordinal: false },
+						series:
+						[
+							{
+								name: 'Temperature',
+								data: transformData(influxData)
+							}
+						]
+					});
+				});
+			}
+			
 			function changeStatus(text, style)
 			{
 				$('#conntext').text(text).removeClass().addClass(style);
 				$('#connbull').removeClass().addClass(style);
 			}
-			
-			
-			var influxdb = 'http://racerzeroone.ddns.net:8086/query';
-			var testQuery = "SELECT time,value FROM temp";
-			$.getJSON( influxdb,
-			{
-			u: 'public',
-			p: 'public',
-					db: 'mydb',
-			epoch: 'ms',
-					q: testQuery
-				},
-				function( influxData )
-			{
-			$('#container').highcharts('StockChart',
-			{
-				rangeSelector:
-			{ 
-				allButtonsEnabled: true,
-				buttons: 
-				[
-					{
-					type: 'minute',
-					count: 60,
-					text: 'hour'
-				},
-				{
-					type: 'day',
-					count: 1,
-					text: 'day'
-				},
-				{
-					type: 'week',
-					count: 1,
-					text: 'week'
-				},
-				{
-					type: 'all',
-					text: 'All'
-				}
-				],
-				selected: 0
-			},
-			xAxis: { ordinal: false },
-			series:
-			[
-				{
-					name: 'Temperature',
-					data: transformData(influxData)
-				}
-			]
-			});
-			var asd = JSON.stringify(transformData(influxData));
-				});
-			
 			
 			
 			

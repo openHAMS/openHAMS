@@ -62,11 +62,33 @@
 				$('#atm').text(a/100);
 			});
 			
-			var q = { q: 'SELECT time,value FROM temp' };
+			var q = { q: 'SELECT time,value FROM temp,atm' };
 			function queryData()
 			{
 				$.get('query', q, function(influxData)
 				{
+					var seriesOptions = [];
+					transformData(influxData, 0).map(function(obj)
+					{
+						obj[1] = obj[1] / 100;
+						return obj;
+					});
+					seriesOptions[0] = 
+					{
+						color: Highcharts.getOptions().colors[1],
+						name: 'Pressure',
+						data: transformData(influxData, 0),
+						type: 'spline',
+						yAxis: 0
+					};
+					seriesOptions[1] = 
+					{
+						color: Highcharts.getOptions().colors[0],
+						name: 'Temperature',
+						data: transformData(influxData, 1),
+						type: 'spline',
+						yAxis: 1
+					};
 					$('#container').highcharts('StockChart',
 					{
 						rangeSelector:
@@ -96,30 +118,65 @@
 							],
 							selected: 0
 						},
+						scrollbar:
+						{
+							enabled: false
+						},
 						xAxis: { ordinal: false },
-						series:
+						yAxis:
 						[
 							{
-								name: 'Temperature',
-								data: transformData(influxData),
-								type: 'spline'
+								labels:
+								{
+									format: '{value}hPa',
+									style:
+									{
+										color: Highcharts.getOptions().colors[1]
+									}
+								},
+								minRange: 2,
+								title:
+								{
+									text: 'Pressure',
+									style:
+									{
+										color: Highcharts.getOptions().colors[1]
+									}
+								}
+							}, 
+							{
+								labels:
+								{
+									format: '{value}°C',
+									style:
+									{
+										color: Highcharts.getOptions().colors[0]
+									}
+								},
+								minRange: 2,
+								title:
+								{
+									text: 'Temperature',
+									style:
+									{
+										color: Highcharts.getOptions().colors[0]
+									}
+								},
+								opposite: false
 							}
-						]
+						],
+						series: seriesOptions
 					});
 				});
 			}
-			
 			function changeStatus(text, style)
 			{
 				$('#conntext').text(text).removeClass().addClass(style);
 				$('#connbull').removeClass().addClass(style);
 			}
-			
-			
-			
-			function transformData(influxData)
+			function transformData(influxData, i)
 			{
-				return influxData.results[0].series[0].values;
+				return influxData.results[0].series[i].values;
 			}
 		</script>
 	</body>

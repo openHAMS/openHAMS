@@ -5,7 +5,11 @@
 }
 body
 {
-	background-color: #FAFAFA; font-family: 'Roboto', sans-serif; font-size: 1.5em; font-weight: 300;
+	background-color: #FAFAFA;
+	font-family: 'Roboto', sans-serif;
+	font-size: 1.5em;
+	font-weight: 300;
+	margin: 0em;
 }
 table
 {
@@ -13,11 +17,18 @@ table
 }
 h1
 {
-	color: #2196F3; font-size: 2em; font-weight: 300; margin-bottom: -0.17em;
+	color: #2196F3;
+	font-size: 2em;
+	font-weight: 300; margin-bottom: -0.17em;
 }
 data
 {
 	font-weight: 400;
+}
+div
+{
+	height: 20em;
+	width: 100%;
 }
 status
 {

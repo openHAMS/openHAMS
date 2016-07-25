@@ -2,8 +2,13 @@ var chartSettings =
 {
 	chart:
 	{
+		defaultSeriesType: 'spline',
 		renderTo: 'container',
-		defaultSeriesType: 'spline'
+		style:
+		{
+			fontFamily: 'Roboto',
+			fontWeight: 400
+		}
 	},
 	navigator : { enabled: false },
 	rangeSelector:
@@ -58,7 +63,8 @@ var chartSettings =
 			{
 				align: 'left',
 				format: '{value:.1f}hPa',
-				style: { color: Highcharts.getOptions().colors[1] }
+				style: { color: Highcharts.getOptions().colors[1] },
+				x: 0
 			},
 			minRange: 2,
 			title:

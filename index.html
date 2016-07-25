@@ -1,19 +1,8 @@
 <!doctype html>
 <html>
 	<head>
-		<title>weather_station</title>
-		<style>
-			@import url(//fonts.googleapis.com/css?family=Roboto:400,300&subset=latin,latin-ext);
-			* { box-sizing: border-box; }
-			body { background-color: #FAFAFA; font-family: 'Roboto', sans-serif; font-size: 1.5em; font-weight: 300; }
-			table { margin-top: 0.67em; }
-			h1 { color: #2196F3; font-size: 2em; font-weight: 300; margin-bottom: -0.17em; }
-			data { font-weight: 400; }
-			status { font-size: 0.67em; font-weight: 400; margin-left: 0.33em; }
-			status.connect { color: #4CAF50; }
-			status.connect_error { color: #FF5722; }
-			status.reconnect_attempt { color: #FFC107; }
-		</style>
+		<title>weather_station</title>		
+		<link rel="stylesheet" type="text/css" href="/static/stylesheets/style.css">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	</head>
 	<body>
@@ -34,32 +23,41 @@
 				<td>hPa</td>
 			</tr>
 		</table>
-		<script src="https://code.jquery.com/jquery-3.0.0.js"></script>
-		<script src="https://code.highcharts.com/stock/highstock.js"></script>
-		<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+		<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="https://code.highcharts.com/stock/highstock.js"></script>
+		<script type="text/javascript" src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+		<script type="text/javascript" src="/static/javascripts/chartSettings.js"></script>
+		<script type="text/javascript" src="/static/javascripts/connectionStatus.js"></script>
 		<script>
 			var socket = io();
+			var chart;
+			var time;
 			
-			socket.on('connect', function()
+			socket.on('atm', function(a)
 			{
-				changeStatus('Connected', 'connect');
-				queryData();
-			});
-			socket.on('connect_error', function()
-			{
-				changeStatus('Disconnected.', 'connect_error');
-			});
-			socket.on('reconnect_attempt', function()
-			{
-				changeStatus('Reconnecting...', 'reconnect_attempt');
+				$('#atm').text(a[1]/100);
+				/*
+				try
+				{
+					chart.series[0].addPoint([a[0], a[1]/100], true, true);
+				}
+				catch(err)
+				{
+					console.log(err);
+				}
+				*/
 			});
 			socket.on('temp', function(t)
 			{
-				$('#temp').text(t);
-			});
-			socket.on('atm', function(a)
-			{
-				$('#atm').text(a/100);
+				$('#temp').text(t[1]);
+				/*
+				try
+				{
+					chart.series[1].addPoint([t[0], t[1]], true, true);
+				}
+				catch(err)
+				{ }
+				*/
 			});
 			
 			var q = { q: 'SELECT time,value FROM temp,atm' };
@@ -68,6 +66,7 @@
 				$.get('query', q, function(influxData)
 				{
 					var seriesOptions = [];
+					//convert Pa to hPa
 					transformData(influxData, 0).map(function(obj)
 					{
 						obj[1] = obj[1] / 100;
@@ -78,7 +77,6 @@
 						color: Highcharts.getOptions().colors[1],
 						name: 'Pressure',
 						data: transformData(influxData, 0),
-						type: 'spline',
 						yAxis: 0
 					};
 					seriesOptions[1] = 
@@ -86,93 +84,11 @@
 						color: Highcharts.getOptions().colors[0],
 						name: 'Temperature',
 						data: transformData(influxData, 1),
-						type: 'spline',
 						yAxis: 1
 					};
-					$('#container').highcharts('StockChart',
-					{
-						rangeSelector:
-						{
-							allButtonsEnabled: true,
-							buttons: 
-							[
-								{
-									type: 'minute',
-									count: 60,
-									text: 'hour'
-								},
-								{
-									type: 'day',
-									count: 1,
-									text: 'day'
-								},
-								{
-									type: 'week',
-									count: 1,
-									text: 'week'
-								},
-								{
-									type: 'all',
-									text: 'All'
-								}
-							],
-							selected: 0
-						},
-						scrollbar:
-						{
-							enabled: false
-						},
-						xAxis: { ordinal: false },
-						yAxis:
-						[
-							{
-								labels:
-								{
-									format: '{value}hPa',
-									style:
-									{
-										color: Highcharts.getOptions().colors[1]
-									}
-								},
-								minRange: 2,
-								title:
-								{
-									text: 'Pressure',
-									style:
-									{
-										color: Highcharts.getOptions().colors[1]
-									}
-								}
-							}, 
-							{
-								labels:
-								{
-									format: '{value}°C',
-									style:
-									{
-										color: Highcharts.getOptions().colors[0]
-									}
-								},
-								minRange: 2,
-								title:
-								{
-									text: 'Temperature',
-									style:
-									{
-										color: Highcharts.getOptions().colors[0]
-									}
-								},
-								opposite: false
-							}
-						],
-						series: seriesOptions
-					});
+					chartSettings.series = seriesOptions;
+					chart = new Highcharts.StockChart( chartSettings );
 				});
-			}
-			function changeStatus(text, style)
-			{
-				$('#conntext').text(text).removeClass().addClass(style);
-				$('#connbull').removeClass().addClass(style);
 			}
 			function transformData(influxData, i)
 			{

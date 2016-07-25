@@ -1,4 +1,5 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var StatsD = require('hot-shots');
 var http = require('http');
 var server = http.Server(app);
@@ -28,6 +29,9 @@ client.socket.on('error', function(error)
     console.error("Error in socket: ", error);
 });
 
+
+app.use(express.static('public'));
+app.use('/static', express.static('public'));
 
 
 var pingUrl = "http://ipecho.net/plain";
@@ -75,8 +79,9 @@ ardu.on('data', function(data)
     try
     {
         var jsonData = JSON.parse(data);
-        io.sockets.emit('temp', jsonData.temp);
-        io.sockets.emit('atm', jsonData.atm);
+		io.sockets.emit('date', Date.now());
+        io.sockets.emit('temp', [Date.now(), jsonData.temp]);
+        io.sockets.emit('atm', [Date.now(), jsonData.atm]);
 		client.gauge('temp', jsonData.temp);
 		client.gauge('atm', jsonData.atm);
     }

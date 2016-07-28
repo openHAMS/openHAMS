@@ -9,13 +9,12 @@ var qs = require('qs');
 var request = require('request');
 var merge = require('merge');
 
-var jsonContent;
-var portName = '/dev/ttyACM0';
+var PORT_NAME = '/dev/ttyACM0';
 if(process.argv.length > 2)
-    portName = process.argv[2];
+    PORT_NAME = process.argv[2];
 
 var sp = serialport.SerialPort;
-var ardu = new sp(portName, 
+var ardu = new sp(PORT_NAME, 
 {
     baudRate:9600, 
     parser:serialport.parsers.readline("\r\n")
@@ -34,8 +33,8 @@ app.use(express.static('public'));
 app.use('/static', express.static('public'));
 
 
-var pingUrl = "http://ipecho.net/plain";
-var defUrl = "http://racerzeroone.ddns.net/";
+var PING_URL = "http://ipecho.net/plain";
+var OWN_URL = "http://racerzeroone.ddns.net/";
 var queryParams =
 {
 	u: 'public',
@@ -91,13 +90,13 @@ ardu.on('data', function(data)
     }
 });
 
-http.get(pingUrl, function (res)
+http.get(PING_URL, function (res)
 {
     res.on("data", function (data)
     {
 		console.log("================================================================================");
         console.log("    " + "ip:  " + data + ":8081");
-		console.log("    " + "url: " + defUrl);
+		console.log("    " + "url: " + OWN_URL);
 		console.log("================================================================================");
     }).setEncoding("utf8");
 });

@@ -59,6 +59,7 @@ var chartSettings =
 	yAxis:
 	[
 		{
+			allowDecimals: false,
 			labels:
 			{
 				align: 'left',
@@ -71,7 +72,8 @@ var chartSettings =
 			{
 				text: 'Pressure',
 				style: { color: Highcharts.getOptions().colors[1] }
-			}
+			},
+			opposite: true
 		}, 
 		{
 			labels:

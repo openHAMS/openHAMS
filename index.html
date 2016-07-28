@@ -60,6 +60,14 @@
 				*/
 			});
 			
+			Highcharts.setOptions(
+			{
+				global:
+				{
+					useUTC: false
+				}
+			});
+			
 			var q = { q: 'SELECT time,value FROM temp,atm' };
 			function queryData()
 			{

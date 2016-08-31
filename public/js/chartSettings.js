@@ -62,8 +62,9 @@ var chartSettings =
 			allowDecimals: false,
 			labels:
 			{
-				align: 'left',
+				align: 'right',
 				format: '{value:.1f}hPa',
+				reserveSpace: false,
 				style: { color: Highcharts.getOptions().colors[1] },
 				x: 0
 			},
@@ -78,9 +79,11 @@ var chartSettings =
 		{
 			labels:
 			{
-				align: 'right',
+				align: 'left',
 				format: '{value:.1f}°C',
-				style: { color: Highcharts.getOptions().colors[0] }
+				reserveSpace: false,
+				style: { color: Highcharts.getOptions().colors[0] },
+				x: 0
 			},
 			minRange: 2,
 			title:

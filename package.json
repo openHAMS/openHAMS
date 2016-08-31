@@ -1,7 +1,13 @@
 {
+<<<<<<< HEAD
+  "name": "weather_station",
+  "version": "1.2.0",
+  "description": "weather_station server",
+=======
   "name": "openHAMS",
   "version": "1.1.0",
   "description": "open Home Automation&Monitoring System",
+>>>>>>> refs/remotes/origin/master
   "main": "server.js",
   "repository": {
     "type": "git",
@@ -17,14 +23,18 @@
     "openHAMS"
   ],
   "author": "Laszlo Szekely-Toth",
+<<<<<<< HEAD
+  "license": "GPL-3.0",
+=======
   "license": "GPL",
+>>>>>>> refs/remotes/origin/master
   "dependencies": {
     "express": "^4.14.0",
     "hot-shots": "*",
     "merge": "^1.2.0",
+    "mqtt": "^1.13.0",
     "qs": "^6.2.0",
     "request": "^2.73.0",
-    "serialport": "*",
     "socket.io": "*"
   }
 }

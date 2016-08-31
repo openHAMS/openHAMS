@@ -1,41 +1,103 @@
 <!doctype html>
 <html>
 	<head>
-		<title>weather_station</title>		
-		<link rel="stylesheet" type="text/css" href="/static/stylesheets/style.css">
+		<title>openHAMS</title>		
+		<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	</head>
 	<body>
-		<h1>Weather Station</h1>
-		<status id="connbull">&#x25cf;</status><status id="conntext"></status>
-		<table>
-			<tr>
-				<div id="container"></div>
-			</tr>
-			<tr>
-				<td>temperature: </td>
-				<td align="right" style="width:4em"><data id="temp"></data></td>
-				<td>&#8451;</td>
-			</tr>
-			<tr>
-				<td>atmospheric pressure: </td>
-				<td align="right" style="width:4em"><data id="atm"></data></td>
-				<td>hPa</td>
-			</tr>
-		</table>
+		<div class="container">
+			<h1 class="blue-text">openHAMS</h1>
+			<status id="connbull">&#x25cf;</status><status id="conntext"></status>
+		</div>
+		<div class="container">
+			<div class="row">
+				<div class="col s12 m6 l4">
+					<div class="card">
+						<div class="card-image">
+							<div class="chart" id="container"></div>
+						</div>
+						<div class="card-content grey-text text-darken-3">
+							<span class="card-title grey-text">Barometer</span>
+							<p>
+								<table class="striped">
+									<tbody>
+										<tr>
+											<td>temperature: </td>
+											<td class="right-align"><data id="temp"></data></td>
+											<td>&#8451;</td>
+										</tr>
+										<tr>
+											<td>pressure: </td>
+											<td class="right-align"><data id="atm"></data></td>
+											<td>hPa</td>
+										</tr>
+									</tbody>
+								</table>
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="col s12 m6 l4">
+					<div class="card">
+						<div class="card-content grey-text text-darken-3">
+							<span class="card-title grey-text">RGB LEDs</span>
+							<div class="divider" style="height: 3px;"><div id="ledStatus" style="height: 100%; width: 100%;"></div></div>
+							<form id="ledForm">
+								<p><input name="ledRadios" type="radio" id="ledRadioRed"       value='FF0000' /><label for="ledRadioRed"      >red      </label></p>
+								<p><input name="ledRadios" type="radio" id="ledRadioOrangered" value='FF0F00' /><label for="ledRadioOrangered">orangered</label></p>
+								<p><input name="ledRadios" type="radio" id="ledRadioGreen"     value='00FF00' /><label for="ledRadioGreen"    >green    </label></p>
+								<p><input name="ledRadios" type="radio" id="ledRadioBlue"      value='0000FF' /><label for="ledRadioBlue"     >blue     </label></p>
+								<p><input name="ledRadios" type="radio" id="ledRadioLightBlue" value='007FFF' /><label for="ledRadioLightBlue">lightblue</label></p>
+								<p><input name="ledRadios" type="radio" id="ledRadioCyan"      value='00FFFF' /><label for="ledRadioCyan"     >cyan     </label></p>
+								<p><input name="ledRadios" type="radio" id="ledRadioWhite"     value='FFFFFF' /><label for="ledRadioWhite"    >white    </label></p>
+								<p><input name="ledRadios" type="radio" id="ledRadioTrueWhite" value='FF9C95' /><label for="ledRadioTrueWhite">truewhite</label></p>
+								<p class="range-field">
+									<input type="range" id="ledBrightness" min="16" max="255" value="255" />
+								</p>
+							</form>
+						</div>
+						<div class="card-action right-align switch">
+							<label>
+								Off
+								<input id="ledSwitch" checked="checked" type="checkbox">
+								<span class="lever"></span>
+								On
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+			<script type="text/javascript">
+				(!!window.jQuery)||document.write('<script type="text/javascript" src="/static/js/lib/jquery-3.1.0.min.js"><\/script>');
+			</script>
 		<script type="text/javascript" src="https://code.highcharts.com/stock/highstock.js"></script>
+			<script type="text/javascript">
+				(!!window.Highcharts)||document.write('<script type="text/javascript" src="/static/js/lib/highcharts-custom.js"><\/script>');
+			</script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+			<script type="text/javascript">
+				(!!window.Materialize)||document.write('<link rel="stylesheet" type="text/css" href="/static/css/lib/materialize.min.css">');
+				(!!window.Materialize)||document.write('<script type="text/javascript" src="/static/js/lib/materialize.min.js"><\/script>');
+			</script>
 		<script type="text/javascript" src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-		<script type="text/javascript" src="/static/javascripts/chartSettings.js"></script>
-		<script type="text/javascript" src="/static/javascripts/connectionStatus.js"></script>
+			<script type="text/javascript">
+				(!!window.socket)||document.write('<script type="text/javascript" src="/socket.io/socket.io.js"><\/script>');
+			</script>
+		<script type="text/javascript" src="/static/js/chartSettings.js"></script>
+		<script type="text/javascript" src="/static/js/chart.js"></script>
+
+		<script type="text/javascript" src="/static/js/connectionStatus.js"></script>
+		<script type="text/javascript" src="/static/js/led.js"></script>
+
 		<script>
 			var socket = io();
-			var chart;
-			var time;
-			
-			socket.on('atm', function(a)
+			socket.on('rcr/rcr/desk/sensors/bmp180/pressure', function(a)
 			{
-				$('#atm').text(a[1]/100);
+				$('#atm').text(a/10);
 				/*
 				try
 				{
@@ -47,9 +109,9 @@
 				}
 				*/
 			});
-			socket.on('temp', function(t)
+			socket.on('rcr/rcr/desk/sensors/bmp180/temperature', function(t)
 			{
-				$('#temp').text(t[1]);
+				$('#temp').text(t);
 				/*
 				try
 				{
@@ -59,49 +121,28 @@
 				{ }
 				*/
 			});
-			
-			Highcharts.setOptions(
+			var led = new RGBLed('led');
+			socket.on('rcr/rcr/desk/rgbled/status', function(c)
 			{
-				global:
-				{
-					useUTC: false
-				}
+				console.log(c);
+				led.setUI(c);
 			});
+			$('input[name=ledRadios]', '#ledForm').change(function()
+			{
+				led.onLedInput(false);
+			});
+			$('#ledBrightness').on('input', function()
+			{
+				led.onLedInput(false);
+			});
+			$('#ledSwitch').change(function()
+			{
+				led.onLedInput(true);
+			});
+
 			
-			var q = { q: 'SELECT time,value FROM temp,atm' };
-			function queryData()
-			{
-				$.get('query', q, function(influxData)
-				{
-					var seriesOptions = [];
-					//convert Pa to hPa
-					transformData(influxData, 0).map(function(obj)
-					{
-						obj[1] = obj[1] / 100;
-						return obj;
-					});
-					seriesOptions[0] = 
-					{
-						color: Highcharts.getOptions().colors[1],
-						name: 'Pressure',
-						data: transformData(influxData, 0),
-						yAxis: 0
-					};
-					seriesOptions[1] = 
-					{
-						color: Highcharts.getOptions().colors[0],
-						name: 'Temperature',
-						data: transformData(influxData, 1),
-						yAxis: 1
-					};
-					chartSettings.series = seriesOptions;
-					chart = new Highcharts.StockChart( chartSettings );
-				});
-			}
-			function transformData(influxData, i)
-			{
-				return influxData.results[0].series[i].values;
-			}
+
+
 		</script>
 	</body>
 </html>

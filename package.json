@@ -1,6 +1,6 @@
 {
   "name": "weather_station",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "weather_station server",
   "main": "server.js",
   "repository": {

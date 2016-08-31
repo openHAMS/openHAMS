@@ -17,14 +17,14 @@
     "weather_station"
   ],
   "author": "Laszlo Szekely-Toth",
-  "license": "ISC",
+  "license": "GPL-3.0",
   "dependencies": {
     "express": "^4.14.0",
     "hot-shots": "*",
     "merge": "^1.2.0",
+    "mqtt": "^1.13.0",
     "qs": "^6.2.0",
     "request": "^2.73.0",
-    "serialport": "*",
     "socket.io": "*"
   }
 }
